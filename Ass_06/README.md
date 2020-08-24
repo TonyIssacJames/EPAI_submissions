@@ -36,4 +36,4 @@
         for suit in self.suits:
             for val in self.vals:
                 self.cards.append(Card(val,suit))
-```
+```python
