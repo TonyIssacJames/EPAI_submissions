@@ -26,3 +26,11 @@
 ## 1 - The Standard Poker Game Rules for hands of 5 card are given below
 
 ![Five Card Poker Rules](https://i.pinimg.com/474x/6b/1f/f7/6b1ff73716c14139c951241f3c1d7c46.jpg)
+
+## 2 - Write a normal function without using lambda, zip, and map function to create 52 cards in a deck 
+
+```
+var add2 = function(number) {
+  return number + 2;
+}
+```
