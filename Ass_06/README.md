@@ -30,7 +30,7 @@
 ## 2
 ## 3 - Write a normal function without using lambda, zip, and map function to create 52 cards in a deck 
 
-```
+```python
     def create_deck_normal(self):
         """Creates the cards without using lambda, zip, and map function to create 52 cards in a deck"""
         for suit in self.suits:
