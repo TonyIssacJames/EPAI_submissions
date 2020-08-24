@@ -2,6 +2,9 @@
     Implementing the our own Poker Game"""
 
 import random
+import logging
+
+#logging.basicConfig(level=logging.DEBUG)
 
 values = tuple(['2', '3', '4', '5', '6', '7', '8', '9', '10', 'jack', 'queen', 'king', 'ace'])
 suits  = tuple(['spades', 'clubs', 'hearts', 'diamonds'])
@@ -16,7 +19,7 @@ class Card:
     #a static dictionary to calcualte intrinisc value of each card
     card_intr_val = {'2':2, '3':3, '4':4, '5':5, '6':6,\
                      '7':7, '8':8, '9':9, '10':10,\
-                     'jack':10, 'queen':11, 'king':12, 'ace':13,\
+                     'jack':11, 'queen':12, 'king':13, 'ace':14,\
                      'spades':4, 'clubs':1, 'hearts':3, 'diamonds':2 #sutis have no significance here
                      }
 
@@ -170,7 +173,7 @@ class MyPoker:
         max_reps    = max(hist.values())  #max_rep , to detect 4 of kind or 3 of a kind
         no_of_reps  = len(list(filter(lambda x: x > 1, hist.values()))) #no_of_reps
 
-        print("hist, no_cards, max_reps, no_of_reps ",hist, no_cards, max_reps, no_of_reps)
+        logging.debug("hist= {}, no_cards= {}, max_reps={}, no_of_reps={}".format(hist, no_cards, max_reps, no_of_reps))
 
         if no_cards >= 3:
             #make rules for the case when cards are 3, 4, 5
@@ -199,8 +202,8 @@ class MyPoker:
         p_values = list(map(int, sorted(p_cards, key=int, reverse=True)))
         p_suits  = list(map(lambda card: card.suit(), sorted(p_cards,key=int, reverse=True)))
 
-        print("p_values: ",p_values)
-        print("p_suits: ",p_suits)
+        logging.debug("p_values: {}".format(p_values))
+        logging.debug("p_suits: {}".format(p_suits))
         
         if self.pair_exists(p_values):
             #Four of Kind, Full house, Three of a kind, Two pair, One pair
@@ -244,21 +247,34 @@ class MyPoker:
         p2_values = list(map(int, sorted(p2_cards,key=int, reverse=True)))
 
 
+        #we need to sort by repetion first, and value next for comparison
+        p1_hist = self.calculate_hist(p1_values) #
+        p2_hist = self.calculate_hist(p2_values) #
+
+        logging.debug("Before Sort with histogram, p1_values: {}".format(p1_values))
+        logging.debug("Before Sort with histogram, p2_values: {}".format(p2_values))
+        
+        p1_values = sorted(p1_values, key = lambda val: p1_hist[val], reverse=True)
+        p2_values = sorted(p2_values, key = lambda val: p2_hist[val], reverse=True)
+        
+        logging.debug("After Sort with histogram, p1_values: {}".format(p1_values))
+        logging.debug("After Sort with histogram, p2_values: {}".format(p2_values))
+        
         p1_rank_name = self.calc_rank(p1_cards)
         p2_rank_name = self.calc_rank(p2_cards)
 
         p1_rank = self.rank_of_hand[p1_rank_name]
         p2_rank = self.rank_of_hand[p2_rank_name]
         
-        print("p1_rank: ", p1_rank_name)
-        print("p2_rank: ", p2_rank_name)
+        logging.debug("p1_rank: {}".format(p1_rank_name))
+        logging.debug("p2_rank: {}".format(p2_rank_name))
         
         if p1_rank < p2_rank:
             return "Wins" # P1 wins
         elif p1_rank > p2_rank:
             return "Lose" # P2 wins
         else:
-            #rank is same now let's check the card vlaues
+            #rank is same now let's check the card vlaues       
             for p1_value, p2_value in zip(p1_values, p2_values):
                 if p1_value > p2_value:
                     return "Wins" # P1 wins
@@ -266,36 +282,27 @@ class MyPoker:
                     return "Lose" # P2 wins
 
             return "Draw" # the game is draw
+
+if __name__ == '__main__':    
+#Sample test code 
+    deck1 = Deck() #create a deck of cards
+    #deck1.show() #show the entire deck of cards
+    deck1.shuffle() #shuffle the careds
     
-#=========================
-#start execuring the code
-deck1 = Deck()
-deck1.show()
-deck1.shuffle()
-print("==============================")
-deck1.show(10)
+    deck1.show(10) #after shuffling show the first 10 cards
 
-game = MyPoker()
+    game = MyPoker() #MyPoker intilises a game all the rules are embded in MyPoker
 
-player1_cards = deck1.deal(5)
-player2_cards = deck1.deal(5)
-player3_cards = deck1.deal(2)
+    player1_cards = deck1.deal(5) #Deal 5 cards for Player 1
+    player2_cards = deck1.deal(5) #Deal 5 cards for Player 2
+    player3_cards = deck1.deal(2) #Deal 2 cards for Player 3, just for testing the function
 
-print("Player 1: ", player1_cards)
-print("Player 2: ", player2_cards)
-print("Player 1: ", sorted(player1_cards,key=int, reverse=True))
-print("Player 2: ", sorted(player2_cards,key=int, reverse=True))
+    print("Player 1: ", player1_cards)
+    print("Player 2: ", player2_cards)
+    print("Player 3: ", player3_cards)
 
-
-print(player1_cards)
-
-print(player1_cards[0] >= player2_cards[0])
-print(player1_cards[0] > player2_cards[0])
-print(player1_cards[0] !=  player2_cards[0])
-print(player1_cards[0].suit())
-
-print("validate_hand(player3_cards):", game.is_valid_hand(player3_cards))
-print("validate_hand(player1_cards):", game.is_valid_hand(player1_cards))
-print(game.compare_hands(player3_cards, player2_cards))
-print("The following should compare")
-print(game.compare_hands(player1_cards, player2_cards))
+    #print("validate_hand(player3_cards):", game.is_valid_hand(player3_cards)) 
+    #print("validate_hand(player1_cards):", game.is_valid_hand(player1_cards))
+    
+    print(game.compare_hands(player3_cards, player2_cards)) #Return None      
+    print("Player1 ", game.compare_hands(player1_cards, player2_cards)) #Should Compare
