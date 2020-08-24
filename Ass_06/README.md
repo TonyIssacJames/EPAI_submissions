@@ -1,7 +1,7 @@
 # EPAI_Assignment_06 Poker Game
 
 ## Objective
-Compare two hands of cards using Standard Poker Game rules
+#### Compare two hands of cards using Standard Poker Game rules
 
 1. cards can vary form 3 to 5
     - when it is 3 or 4 cards we can define the rules
