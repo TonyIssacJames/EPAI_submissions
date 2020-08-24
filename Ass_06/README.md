@@ -1,2 +1,1 @@
-# EPAI_submissions
-This repo is to submit my EPAi course assignments
+# EPAI_Assignment06 Poker Game
