@@ -27,10 +27,13 @@
 
 ![Five Card Poker Rules](https://i.pinimg.com/474x/6b/1f/f7/6b1ff73716c14139c951241f3c1d7c46.jpg)
 
-## 2 - Write a normal function without using lambda, zip, and map function to create 52 cards in a deck 
+## 2
+## 3 - Write a normal function without using lambda, zip, and map function to create 52 cards in a deck 
 
 ```
-var add2 = function(number) {
-  return number + 2;
-}
+    def create_deck_normal(self):
+        """Creates the cards without using lambda, zip, and map function to create 52 cards in a deck"""
+        for suit in self.suits:
+            for val in self.vals:
+                self.cards.append(Card(val,suit))
 ```
