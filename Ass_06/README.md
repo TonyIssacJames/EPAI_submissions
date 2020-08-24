@@ -5,11 +5,19 @@ Compare two hands of cards using Standard Poker Game rules
 
 1. cards can vary form 3 to 5
     - when it is 3 or 4 cards we can define the rules
-    - we applied the same rules of 5 cards to 3 and 4 cards hands
-      - for example in 3 cards case
-          - a royal flush means A K Q of the same suit
-          - there won't be any Full House
-          - there won't be any Four Of a Kind rank
+    - we applied the same rules of 5 cards to 3 and 4 cards hands whenever possible
+      - but there are some special cases, for example in 3 cards case
+          - a **Royal Flush** means A K Q of the same suit
+          - there won't be any **Full House**
+          - there won't be any **Four Of a Kind**, **Two Pair**
+          - etc.
+       - in 4 cards case
+          - a **Royal Flush** means A K Q J of the same suit
+          - there won't be any **Full House**
+     - in 3 or 4 card case applying the same rules of 5 cards won't make sense from statistical point of view.       
+        - generally higher the rank of a card means that, the probability of getting it is less
+        - but this is just an Assignmet
+        - My Game, My Rules 
         
 2. 2 players only
 3. 1 deck of cards only
