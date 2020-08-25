@@ -4,7 +4,7 @@
 import random
 import logging
 
-# logging.basicConfig(level=logging.DEBUG)
+# logging.basicConfig(level=logging.DEBUG) #uncomment to enable debugging
 
 values = tuple(['2', '3', '4', '5', '6', '7', '8', '9',
                 '10', 'jack', 'queen', 'king', 'ace'])
@@ -63,7 +63,7 @@ class Card:
 
     def __eq__(self, other):
         return self.__int__() == other.__int__() \
-               and self.card_intr_val[self.suit_val] == self.card_intr_val[other.suit_val]
+            and self.card_intr_val[self.suit_val] == self.card_intr_val[other.suit_val]
 
     def suit(self):
         return self.card_show_val[self.suit_val]
@@ -77,28 +77,31 @@ class Deck:
         self.order = []
         self.top = 0  # points to top of the deck
 
+        logging.debug("sel_function: {}".format(sel_function))
         # create the deck of cards normally
         if sel_function == 'normal':
-            self.create_deck_normal()
+            self.create_deck_normal()  # creates a deck card normally
         else:
-            self.create_deck_normal()
+            # creates a deck of card using single expression using zip, lambda and map
+            self.create_deck_single_exp()
 
         # when the deck is created cards are in normal order
         self.order = list(range(52))
 
     def create_deck_normal(self):
-        """Creates the cards without using lambda, zip, and map function to create 52 cards in a deck"""
+        """Creates all the 52 cards in a deck without using lambda, zip, and map function to create 52 cards in a deck"""
         for suit in self.suits:
             for val in self.vals:
                 self.cards.append(Card(val, suit))
 
-    def create_deck_simple(self):
-        """Creates the cards using lambda, zip, and map function to create 52 cards in a deck"""
-        pass
+    def create_deck_single_exp(self):
+        """Creates the all the 52 cards in a deck using a single expression having lambda, zip, and map function"""
+        self.cards = list(map(lambda val_suit: Card(
+            *val_suit), zip(self.vals*len(self.suits), self.suits*len(self.vals))))
 
     def show(self, count=52):
         """show count number of cards from the deck"""
-        count = min(count, 52)  # limit between to 52
+        count = min(count, 52)  # limit count to 52
 
         if count > 0:
             for card in self.cards[:count]:
@@ -121,6 +124,8 @@ class Deck:
 class MyPoker:
     """MyPoker is class is created to put together all game functionalites
        and rules
+
+       MyPoker.compare_hands() can be used to decidide the result of two  hands as per poker rule
 
        for rules refer:
        1 - https://www.blackrain79.com/2018/05/poker-cheat-sheet.html
@@ -147,22 +152,23 @@ class MyPoker:
             return True
 
     @staticmethod
-    def pair_exists(p_hands):
+    def pair_exists(p_values: 'list of card values as integers'):
         """ check if any pair or more exists in the hand"""
-        if len(p_hands) != len(set(p_hands)):
+        if len(p_values) != len(set(p_values)):
             return True
         else:
             return False
 
     @staticmethod
-    def is_flush(p_suits):
+    def is_flush(p_suits: 'list of suit values as strings'):
+        """ calcualte if the cards are all of same suit(flush) or not"""
         if len(set(p_suits)) == 1:
             return True
         else:
             return False
 
     @staticmethod
-    def is_running_seq(p_values):
+    def is_running_seq(p_values: 'list of card values as integers') -> 'True or False':
         """ calcualte if the cards are in a continous sequence or not"""
         diff = p_values[0] - p_values[-1]
         if diff == len(p_values) - 1:
@@ -171,7 +177,8 @@ class MyPoker:
             return False
 
     @staticmethod
-    def calculate_hist(p_values):
+    def calculate_hist(p_values: 'list of card values as integers'):
+        """ calcualte the histogram of input cards, the result will be used to find pairs"""
         hist = {}
         for val in p_values:
             if val in hist:
@@ -182,7 +189,7 @@ class MyPoker:
         return hist
 
     @staticmethod
-    def calc_rank_on_values(p_values):
+    def calc_rank_on_values(p_values: 'list of card values as integers'):
         """calculate the rank of hand based on just the values"""
 
         hist = MyPoker.calculate_hist(p_values)
@@ -215,7 +222,7 @@ class MyPoker:
             return None
 
     @staticmethod
-    def calc_rank(p_cards):
+    def calc_rank(p_cards: 'list of objects of type Card'):
         """ anlayze the hand and rank it
             this function retuns a tuple
             the rank of the hand
@@ -246,18 +253,20 @@ class MyPoker:
                 pass
             else:
                 # Straigt, High Card
-                if self.is_running_seq(p_values):
+                if MyPoker.is_running_seq(p_values):
                     return 'Straight'  # 'Straight'
                 else:
                     return 'High_Card'  # 'High_Card'
 
     @staticmethod
-    def compare_hands(p1_cards, p2_cards):
+    def compare_hands(p1_cards: 'list of Objects of type Card',
+                      p2_cards: 'list of Objects of type Card'
+                      ) -> 'result can be \'Wins\',\'Lose\', \'Draw\' or None':
         """ Given two decks of cards decide the winning  hand
             if p1 wins retuns Wins
             if p1 loses returs Lose
             if it is a draw returns Draw
-            if cannot be determined retun None"""
+            if there is an issue and the result cannot be calcualted then it retun None"""
         # check if both hands are valid
         if not MyPoker.is_valid_hand(p1_cards) or not MyPoker.is_valid_hand(p2_cards):
             return
@@ -315,13 +324,13 @@ class MyPoker:
 
 if __name__ == '__main__':
     # Sample test code
-    deck1 = Deck()  # create a deck of cards
+    deck1 = Deck(None)  # create a deck of cards
     # deck1.show() #show the entire deck of cards
     deck1.shuffle()  # shuffle the careds
 
     deck1.show(10)  # after shuffling show the first 10 cards
 
-    #game = MyPoker()  # MyPoker intilises a game all the rules are embded in MyPoker
+    # game = MyPoker()  # MyPoker intilises a game all the rules are embded in MyPoker
 
     player1_cards = deck1.deal(5)  # Deal 5 cards for Player 1
     player2_cards = deck1.deal(5)  # Deal 5 cards for Player 2
@@ -336,4 +345,5 @@ if __name__ == '__main__':
     #print("validate_hand(player1_cards):", game.is_valid_hand(player1_cards))
 
     print(MyPoker.compare_hands(player3_cards, player2_cards))  # Return None
-    print("Player1 ", MyPoker.compare_hands(player1_cards, player2_cards))  # Should Compare
+    print("Player1 ", MyPoker.compare_hands(
+        player1_cards, player2_cards))  # Should Compare
