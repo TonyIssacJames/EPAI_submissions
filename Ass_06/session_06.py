@@ -62,7 +62,8 @@ class Card:
         return self.__int__() < other.__int__()
 
     def __eq__(self, other):
-        return self.__int__() == other.__int__()
+        return self.__int__() == other.__int__() \
+               and self.card_intr_val[self.suit_val] == self.card_intr_val[other.suit_val]
 
     def suit(self):
         return self.card_show_val[self.suit_val]
@@ -138,26 +139,30 @@ class MyPoker:
     def __init__(self):
         pass
 
-    def is_valid_hand(self, p_hands, min_cards=3, max_cards=5):
+    @staticmethod
+    def is_valid_hand(p_hands, min_cards=3, max_cards=5):
         """validate the current set cards
            this function has to be called first so furhter operation are guranteed to be of success"""
         if p_hands and ((len(p_hands) >= min_cards) and (len(p_hands) <= max_cards)):
             return True
 
-    def pair_exists(self, p_hands):
+    @staticmethod
+    def pair_exists(p_hands):
         """ check if any pair or more exists in the hand"""
         if len(p_hands) != len(set(p_hands)):
             return True
         else:
             return False
 
-    def is_flush(self, p_suits):
+    @staticmethod
+    def is_flush(p_suits):
         if len(set(p_suits)) == 1:
             return True
         else:
             return False
 
-    def is_running_seq(self, p_values):
+    @staticmethod
+    def is_running_seq(p_values):
         """ calcualte if the cards are in a continous sequence or not"""
         diff = p_values[0] - p_values[-1]
         if diff == len(p_values) - 1:
@@ -165,7 +170,8 @@ class MyPoker:
         else:
             return False
 
-    def calculate_hist(self, p_values):
+    @staticmethod
+    def calculate_hist(p_values):
         hist = {}
         for val in p_values:
             if val in hist:
@@ -175,10 +181,11 @@ class MyPoker:
 
         return hist
 
-    def calc_rank_on_values(self, p_values):
+    @staticmethod
+    def calc_rank_on_values(p_values):
         """calculate the rank of hand based on just the values"""
 
-        hist = self.calculate_hist(p_values)
+        hist = MyPoker.calculate_hist(p_values)
         no_cards = len(p_values)
 
         # max_rep , to detect 4 of kind or 3 of a kind
@@ -207,7 +214,8 @@ class MyPoker:
         else:
             return None
 
-    def calc_rank(self, p_cards):
+    @staticmethod
+    def calc_rank(p_cards):
         """ anlayze the hand and rank it
             this function retuns a tuple
             the rank of the hand
@@ -220,15 +228,15 @@ class MyPoker:
         logging.debug("p_values: {}".format(p_values))
         logging.debug("p_suits: {}".format(p_suits))
 
-        if self.pair_exists(p_values):
+        if MyPoker.pair_exists(p_values):
             # Four of Kind, Full house, Three of a kind, Two pair, One pair
             # Suits has no role any more we only need to check the values
-            return self.calc_rank_on_values(p_values)
+            return MyPoker.calc_rank_on_values(p_values)
         else:
             # Royal Flush, Straight Flush, Flush, Straigt, High Card"
-            if self.is_flush(p_suits):
+            if MyPoker.is_flush(p_suits):
                 # Royal Flush, Straight Flush, Flush
-                if self.is_running_seq(p_values):
+                if MyPoker.is_running_seq(p_values):
                     if p_values[0] == 13:
                         return 'Royal_Flush'  # 'Royal Flush'
                     else:
@@ -243,14 +251,15 @@ class MyPoker:
                 else:
                     return 'High_Card'  # 'High_Card'
 
-    def compare_hands(self, p1_cards, p2_cards):
+    @staticmethod
+    def compare_hands(p1_cards, p2_cards):
         """ Given two decks of cards decide the winning  hand
             if p1 wins retuns Wins
             if p1 loses returs Lose
             if it is a draw returns Draw
             if cannot be determined retun None"""
         # check if both hands are valid
-        if not self.is_valid_hand(p1_cards) or not self.is_valid_hand(p2_cards):
+        if not MyPoker.is_valid_hand(p1_cards) or not MyPoker.is_valid_hand(p2_cards):
             return
 
         # check if lenghs are matching
@@ -262,8 +271,8 @@ class MyPoker:
         p2_values = list(map(int, sorted(p2_cards, key=int, reverse=True)))
 
         # we need to sort by repetion first, and value next for comparison
-        p1_hist = self.calculate_hist(p1_values)
-        p2_hist = self.calculate_hist(p2_values)
+        p1_hist = MyPoker.calculate_hist(p1_values)
+        p2_hist = MyPoker.calculate_hist(p2_values)
 
         logging.debug(
             "Before Sort with histogram, p1_values: {}".format(p1_values))
@@ -280,11 +289,11 @@ class MyPoker:
         logging.debug(
             "After Sort with histogram, p2_values: {}".format(p2_values))
 
-        p1_rank_name = self.calc_rank(p1_cards)
-        p2_rank_name = self.calc_rank(p2_cards)
+        p1_rank_name = MyPoker.calc_rank(p1_cards)
+        p2_rank_name = MyPoker.calc_rank(p2_cards)
 
-        p1_rank = self.rank_of_hand[p1_rank_name]
-        p2_rank = self.rank_of_hand[p2_rank_name]
+        p1_rank = MyPoker.rank_of_hand[p1_rank_name]
+        p2_rank = MyPoker.rank_of_hand[p2_rank_name]
 
         logging.debug("p1_rank: {}".format(p1_rank_name))
         logging.debug("p2_rank: {}".format(p2_rank_name))
@@ -312,7 +321,7 @@ if __name__ == '__main__':
 
     deck1.show(10)  # after shuffling show the first 10 cards
 
-    game = MyPoker()  # MyPoker intilises a game all the rules are embded in MyPoker
+    #game = MyPoker()  # MyPoker intilises a game all the rules are embded in MyPoker
 
     player1_cards = deck1.deal(5)  # Deal 5 cards for Player 1
     player2_cards = deck1.deal(5)  # Deal 5 cards for Player 2
@@ -326,6 +335,5 @@ if __name__ == '__main__':
     #print("validate_hand(player3_cards):", game.is_valid_hand(player3_cards))
     #print("validate_hand(player1_cards):", game.is_valid_hand(player1_cards))
 
-    print(game.compare_hands(player3_cards, player2_cards))  # Return None
-    print("Player1 ", game.compare_hands(
-        player1_cards, player2_cards))  # Should Compare
+    print(MyPoker.compare_hands(player3_cards, player2_cards))  # Return None
+    print("Player1 ", MyPoker.compare_hands(player1_cards, player2_cards))  # Should Compare
