@@ -10,7 +10,8 @@
 |4   | Write a Proper readme file | done  |
 |5   | Docstrings must, and it must mention what the function is doing (2, 3)  |  done |
 |6   | Write annotations for 3 | done   |
-|7   | Write annotations for 3 | done   |
+|7   | check correcteness of functions in 1/2 with a manual list of 52 cards | done   |
+|7   | Basics tests to ensure your code if correct (20+ combination tests (counted as 1 test) for function in 3 | partially done   |
 
 ## Compare two hands of cards using "our" Poker Game rules
 
